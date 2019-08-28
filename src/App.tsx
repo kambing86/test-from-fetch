@@ -1,7 +1,6 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
-import TestComponent from './TestComponent';
+import React from "react";
+import "./App.css";
+import TestComponent from "./TestComponent";
 
 const App: React.FC = () => {
   return (
@@ -9,6 +8,6 @@ const App: React.FC = () => {
       <TestComponent />
     </div>
   );
-}
+};
 
 export default App;

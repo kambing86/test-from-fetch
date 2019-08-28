@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { of } from "rxjs";
 import { fromFetch } from "rxjs/fetch";
 import fromFetchLocal from "./fromFetchLocal";
-import { mergeMap, retry, tap } from "rxjs/operators";
+import { mergeMap, retry, tap, finalize } from "rxjs/operators";
 
 const testApi = "https://httpstat.us/200?sleep=2000";
 
@@ -10,7 +10,10 @@ export default function TestComponent() {
   const [result1, setResult1] = useState();
   const [result2, setResult2] = useState();
   const [result3, setResult3] = useState();
-  const onClick = () => {
+  const onClick = useCallback(() => {
+    setResult1("");
+    setResult2("");
+    setResult3("");
     const sub1 = of(testApi)
       .pipe(
         mergeMap(api => fromFetch(api)),
@@ -18,6 +21,9 @@ export default function TestComponent() {
         mergeMap(res => res.text()),
         tap(text => {
           setResult1(text);
+        }),
+        finalize(() => {
+          setResult1("finalize");
         })
       )
       .subscribe();
@@ -27,6 +33,9 @@ export default function TestComponent() {
         retry(2),
         tap(text => {
           setResult2(text);
+        }),
+        finalize(() => {
+          setResult2("finalize");
         })
       )
       .subscribe();
@@ -36,6 +45,9 @@ export default function TestComponent() {
         retry(2),
         tap(text => {
           setResult3(text);
+        }),
+        finalize(() => {
+          setResult3("finalize");
         })
       )
       .subscribe();
@@ -44,7 +56,7 @@ export default function TestComponent() {
       sub2.unsubscribe();
       sub3.unsubscribe();
     }, 1000);
-  };
+  }, []);
   return (
     <>
       <div>Result1: {result1}</div>
