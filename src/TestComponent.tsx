@@ -14,7 +14,7 @@ export default function TestComponent() {
     setResult1("");
     setResult2("");
     setResult3("");
-    const sub1 = of(testApi)
+    const sub1 = of(testApi + "&id=sub1")
       .pipe(
         mergeMap(api => fromFetch(api)),
         retry(2),
@@ -27,7 +27,7 @@ export default function TestComponent() {
         })
       )
       .subscribe();
-    const sub2 = fromFetch(testApi)
+    const sub2 = fromFetch(testApi + "&id=sub2")
       .pipe(
         mergeMap(res => res.text()),
         retry(2),
@@ -39,7 +39,7 @@ export default function TestComponent() {
         })
       )
       .subscribe();
-    const sub3 = fromFetchLocal(testApi)
+    const sub3 = fromFetchLocal(testApi + "&id=sub3")
       .pipe(
         mergeMap(res => res.text()),
         retry(2),
