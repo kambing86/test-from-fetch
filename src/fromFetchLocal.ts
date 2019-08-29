@@ -7,19 +7,17 @@ export default function fromFetch(
   return new Observable<Response>(subscriber => {
     const controller = new AbortController();
     const signal = controller.signal;
-    let outerSignalHandler: () => void;
     let abortable = true;
     let unsubscribed = false;
 
     if (init) {
       // If a signal is provided, just have it teardown. It's a cancellation token, basically.
       if (init.signal) {
-        outerSignalHandler = () => {
+        init.signal.addEventListener("abort", () => {
           if (!signal.aborted) {
             controller.abort();
           }
-        };
-        init.signal.addEventListener("abort", outerSignalHandler);
+        });
       }
       init.signal = signal;
     } else {
