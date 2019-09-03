@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from "react";
-import { of } from "rxjs";
-import { fromFetch } from "rxjs/fetch";
+import { of, Observable } from "rxjs";
+// @ts-ignore
+import { fromFetch } from "rxjs/_esm5/fetch";
 import fromFetchLocal from "./fromFetchLocal";
 import { mergeMap, retry, tap, finalize } from "rxjs/operators";
 
@@ -16,9 +17,9 @@ export default function TestComponent() {
     setResult3("");
     const sub1 = of(testApi + "&id=sub1")
       .pipe(
-        mergeMap(api => fromFetch(api)),
+        mergeMap(api => fromFetch(api) as Observable<Response>),
         retry(2),
-        mergeMap(res => res.text()),
+        mergeMap((res: Response) => res.text()),
         tap(text => {
           setResult1(text);
         }),
@@ -29,7 +30,7 @@ export default function TestComponent() {
       .subscribe();
     const sub2 = fromFetch(testApi + "&id=sub2")
       .pipe(
-        mergeMap(res => res.text()),
+        mergeMap((res: Response) => res.text()),
         retry(2),
         tap(text => {
           setResult2(text);
@@ -41,7 +42,7 @@ export default function TestComponent() {
       .subscribe();
     const sub3 = fromFetchLocal(testApi + "&id=sub3")
       .pipe(
-        mergeMap(res => res.text()),
+        mergeMap((res: Response) => res.text()),
         retry(2),
         tap(text => {
           setResult3(text);
